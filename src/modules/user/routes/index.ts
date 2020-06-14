@@ -1,10 +1,11 @@
 import { Router, request, response} from 'express';
-import UserCreateController from '../controller/CreateUserController';
+import UserController from '../controller/UserController';
 
 
 const routes = Router();
-const userCreateController = new UserCreateController();
+const userController = new UserController();
 
-routes.post('/', userCreateController.create);
+routes.post('/create', userController.create);
+routes.delete('/delete/:idUser', userController.delete);
 
 export default routes;

@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 
-import express, { json, request, response } from 'express';
-import routes from './routes/index';
+import express, { json } from 'express';
 import './database/index';
+
+import routes from './routes/index';
 
 
 
