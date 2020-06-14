@@ -48,8 +48,9 @@ class UserCreateController{
         
     };
 
+    // public async update(request: Request, response: Response): Promise<Response>{
 
-
+    // }
     public async delete(request:Request, response:Response): Promise<Response>{
         try {
             const ormRepository = getRepository(User);
