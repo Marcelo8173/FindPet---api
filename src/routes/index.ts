@@ -3,6 +3,7 @@ import UserModel from '../modules/user/routes';
 
 const routes = Router();
 
-routes.use('/users', UserModel);  
+routes.use('/users', UserModel);
+  
 
 export default routes;

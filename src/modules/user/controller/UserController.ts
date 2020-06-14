@@ -1,5 +1,5 @@
 import User from '../model/UserModel';
-import { getRepository,Repository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { Request,Response } from 'express';
 import HashProvider from '../providers/HashProvider/implementations/BCryptHashProvider';
 
@@ -37,6 +37,8 @@ class UserCreateController{
             })
         
             await ormRepository.save(user);
+            
+            delete user.password;
 
             return response.json(user);
 
@@ -45,6 +47,7 @@ class UserCreateController{
         }
         
     };
+
 
 
     public async delete(request:Request, response:Response): Promise<Response>{
@@ -80,7 +83,7 @@ class UserCreateController{
         } catch (error) {
             return response.json(error)
         }
-    }
+    };
 }
 
 export default UserCreateController;
