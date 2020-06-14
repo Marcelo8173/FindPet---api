@@ -1,7 +1,8 @@
 import User from '../model/UserModel';
 import { getRepository } from 'typeorm';
-import { Request,Response } from 'express';
+import { Request,Response, urlencoded } from 'express';
 import HashProvider from '../providers/HashProvider/implementations/BCryptHashProvider';
+
 
 class UserCreateController{
 
@@ -48,16 +49,64 @@ class UserCreateController{
         
     };
 
-    // public async update(request: Request, response: Response): Promise<Response>{
+    public async update(request: Request, response: Response): Promise<Response>{
+        const id = request.user.id;
+        const { name, email, old_password, password} = request.body;
+        
+        const ormRepository = getRepository(User);
+        const hashProvider = new HashProvider();
 
-    // }
+        //find user
+        const user = await ormRepository.findOne({
+            where: {id}
+        });
+
+        if(!user){
+            return response.json({erro: 'User not found'});
+        };
+        //find user
+
+        //find email in database, if user change email alredy exist
+        const userEmailCheck = await ormRepository.findOne({
+            where:{email}
+        });
+
+        if(userEmailCheck && userEmailCheck.id !== user.id){
+            return response.json({error: 'E-mail already in use'});
+        }
+        //find email in database, if user change email alredy exist
+        user.name = name;
+        user.email = email;
+
+        //if user try change password without inform old_passwor
+        if(password && !old_password){
+            return response.json({erro:'you need to inform the old password to set a new password'});
+        };
+        //if user try change password without inform old_passwor
+        
+        if(password){
+            const ckeckPassword = await hashProvider.compareHash(old_password,user.password);
+            
+            if(!ckeckPassword){
+                return response.json({error: 'oldPassword does not match'})
+            }
+
+            user.password = await hashProvider.generateHash(password);
+        }
+
+        await ormRepository.save(user);
+        
+        delete user.password;
+        return response.json(user)
+    }
+
     public async delete(request:Request, response:Response): Promise<Response>{
         try {
             const ormRepository = getRepository(User);
 
             const hashProvider = new HashProvider();       
 
-            const id = request.params.idUser;
+            const id = request.user.id;
             const { password } = request.body; 
 
             //if user exist 
